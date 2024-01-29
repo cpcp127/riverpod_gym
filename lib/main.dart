@@ -61,16 +61,17 @@ class MyApp extends ConsumerWidget {
               unselectedItemColor: Colors.blue.withOpacity(0.3),
               type: BottomNavigationBarType.fixed,
               showUnselectedLabels: true)),
-      home: ref.watch(checkAutoLogin).when(data: (autoLogin){
-        return autoLogin == null?LogInView():HomeView();
-      }, error: (error,stackTrace){
-        return Container();
-      }, loading: ()=>Container()),
+      home: ref.watch(checkAutoLogin).when(
+          data: (autoLogin) {
+            return autoLogin == null ? const LogInView() : const HomeView();
+          },
+          error: (error, stackTrace) {
+            return Container();
+          },
+          loading: () => Container()),
     );
   }
 }
-
-
 
 class KrCustomMessages implements LookupMessages {
   @override
