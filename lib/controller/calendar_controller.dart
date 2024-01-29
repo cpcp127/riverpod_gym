@@ -2,21 +2,14 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final focusedDayProvider = StateNotifierProvider((ref){
-  return CalendarController();
+final selectedDateProvider = StateNotifierProvider<SelectedDateNotifier, DateTime>((ref) {
+  return SelectedDateNotifier();
 });
 
+class SelectedDateNotifier extends StateNotifier<DateTime> {
+  SelectedDateNotifier() : super(DateTime.now());
 
-final selectedDayProvider = StateNotifierProvider((ref){
-  return CalendarController();
-});
-
-
-
-class CalendarController extends StateNotifier<DateTime>{
-  CalendarController():super(DateTime.now());
-
-  void selectDay(DateTime dateTime){
-    state = dateTime;
+  void setSelectedDate(DateTime selectedDate) {
+    state = selectedDate;
   }
 }

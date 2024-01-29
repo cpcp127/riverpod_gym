@@ -21,9 +21,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime focusedDay = ref.watch(focusedDayProvider.notifier).state;
-    DateTime selectedDay = ref.watch(selectedDayProvider.notifier).state;
-    LinkedHashMap<DateTime, List<Event>> events = ref.watch(eventsProvider.notifier).state;
+    final selectedDate = ref.watch(selectedDateProvider);
+    // DateTime focusedDay = ref.watch(focusedDayProvider.notifier).state;
+    // DateTime selectedDay = ref.watch(selectedDayProvider.notifier).state;
+    final events = ref.watch(eventsProvider);
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
@@ -49,7 +50,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         children: [
           TableCalendar(
             locale: 'ko_KR',
-            focusedDay: focusedDay,
+            focusedDay: selectedDate,
             firstDay: DateTime.utc(2021, 10, 16),
             lastDay: DateTime.utc(2030, 3, 14),
             calendarStyle: const CalendarStyle(
@@ -60,28 +61,22 @@ class _HomeViewState extends ConsumerState<HomeView> {
             headerStyle: const HeaderStyle(
                 titleCentered: true, formatButtonVisible: false),
             selectedDayPredicate: (day) {
-              return isSameDay(ref.watch(selectedDayProvider.notifier).state, day);
+              return isSameDay(selectedDate, day);
             },
             onPageChanged: (DateTime date) async {
               //provider.changePage(date, context);
             },
             onDaySelected: (selectDay, focusDay) {
-              ref.watch(selectedDayProvider.notifier).selectDay(selectDay);
-              ref.watch(focusedDayProvider.notifier).selectDay(focusDay);
-              setState(() {
-
-              });
+              ref.read(selectedDateProvider.notifier).setSelectedDate(selectDay);
               // setState(() {
               //
               // });
             },
             eventLoader: (day) {
+              ref.read(eventsProvider.notifier).getFireStore(DateTime.now(), context);
               return events[day]??[];
             },
           ),
-          Text(
-            ref.watch(selectedDayProvider.notifier).state.toString(),
-          )
         ],
       ),
     );
@@ -90,9 +85,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2),(){
-      ref.watch(eventsProvider.notifier).getFireStore(DateTime.now(), context);
-    });
+    // Future.delayed(Duration(seconds: 0),(){
+    //   ref.read(eventsProvider.notifier).getFireStore(DateTime.now(), context);
+    //
+    // });
 
   }
 }

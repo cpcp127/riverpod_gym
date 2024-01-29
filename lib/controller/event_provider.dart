@@ -44,7 +44,12 @@ class EventController extends StateNotifier<LinkedHashMap<DateTime, List<Event>>
         });
       }
       state = eventMap;
-      state = super.state;
+      //state = super.state;
     });
+  }
+
+  List<Event> getEventsForDay(DateTime day) {
+    state = super.state;
+    return state[day] ?? [];
   }
 }
