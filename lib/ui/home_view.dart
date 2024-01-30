@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpodgym/controller/calendar_controller.dart';
 import 'package:riverpodgym/controller/event_provider.dart';
+import 'package:riverpodgym/ui/upload_today_view.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import '../toast/show_toast.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
@@ -39,43 +42,75 @@ class _HomeViewState extends ConsumerState<HomeView> {
         },
         currentIndex: homePageIndex,
       ),
-      body: Column(
-        children: [
-          initialDataLoaded.when(data: (data) {
-            return TableCalendar(
-              locale: 'ko_KR',
-              focusedDay: focusedDate,
-              firstDay: DateTime.utc(2021, 10, 16),
-              lastDay: DateTime.utc(2030, 3, 14),
-              calendarStyle: const CalendarStyle(
-                  selectedDecoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.circle,
-              )),
-              headerStyle: const HeaderStyle(
-                  titleCentered: true, formatButtonVisible: false),
-              selectedDayPredicate: (day) {
-                return isSameDay(selectedDate, day);
-              },
-              onPageChanged: (DateTime date) async {
-                ref.read(eventsProvider.notifier).getFireStore(date, context);
-                ref.read(focusedDateProvider.notifier).setSelectedDate(date);
-                //provider.changePage(date, context);
-              },
-              onDaySelected: (selectDay, focusDay) {
-                ref.read(selectedDateProvider.notifier).setSelectedDate(selectDay);
-              },
-              eventLoader: (day) {
-                ref.read(eventsProvider.notifier).getFireStore(day, context);
-                return events[day] ?? [];
-              },
-            );
-          }, error: (e, s) {
-            return const Center(child: Text('에러!'));
-          }, loading: () {
-            return const Center(child: Text('로딩중'));
-          })
-        ],
+      body: Scaffold(
+        appBar: AppBar(
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: GestureDetector(
+                onTap: () async {
+                  if (events.keys.contains(DateTime.utc(DateTime.now().year,
+                      DateTime.now().month, DateTime.now().day))) {
+                    showToast('이미 기록하셨습니다!');
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UploadTodayView()));
+                  }
+                },
+                child: const SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Center(
+                        child: Icon(
+                      Icons.add,
+                      size: 30,
+                    ))),
+              ),
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            initialDataLoaded.when(data: (data) {
+              return TableCalendar(
+                locale: 'ko_KR',
+                focusedDay: focusedDate,
+                firstDay: DateTime.utc(2021, 10, 16),
+                lastDay: DateTime.utc(2030, 3, 14),
+                calendarStyle: const CalendarStyle(
+                    selectedDecoration: BoxDecoration(
+                  color: Colors.blue,
+                  shape: BoxShape.circle,
+                )),
+                headerStyle: const HeaderStyle(
+                    titleCentered: true, formatButtonVisible: false),
+                selectedDayPredicate: (day) {
+                  return isSameDay(selectedDate, day);
+                },
+                onPageChanged: (DateTime date) async {
+                  ref.read(eventsProvider.notifier).getFireStore(date, context);
+                  ref.read(focusedDateProvider.notifier).setSelectedDate(date);
+                  //provider.changePage(date, context);
+                },
+                onDaySelected: (selectDay, focusDay) {
+                  ref
+                      .read(selectedDateProvider.notifier)
+                      .setSelectedDate(selectDay);
+                },
+                eventLoader: (day) {
+                  ref.read(eventsProvider.notifier).getFireStore(day, context);
+                  return events[day] ?? [];
+                },
+              );
+            }, error: (e, s) {
+              return const Center(child: Text('에러!'));
+            }, loading: () {
+              return const Center(child: Text('로딩중'));
+            })
+          ],
+        ),
       ),
     );
   }
