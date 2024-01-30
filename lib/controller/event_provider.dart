@@ -5,24 +5,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
+import 'package:table_calendar/table_calendar.dart';
 import '../model/event_model.dart';
-import '../services/user_service.dart';
 
 final eventsProvider = StateNotifierProvider<EventController,LinkedHashMap<DateTime,List<Event>>>((ref){
   return EventController();
 });
 
+final initialDataProvider = FutureProvider.family.autoDispose((ref,BuildContext context) async {
+  await ref.read(eventsProvider.notifier).initialize(context);
+});
+
 class EventController extends StateNotifier<LinkedHashMap<DateTime, List<Event>>>{
-  EventController():super(LinkedHashMap<DateTime, List<Event>>());
+  EventController():super(LinkedHashMap<DateTime, List<Event>>(equals: isSameDay));
 
-  @override
-  set state(LinkedHashMap<DateTime, List<Event>> value){
-    super.state = value;
+  Future<void> initialize(BuildContext context) async {
+    await getFireStore(DateTime.now(), context);
   }
-
   Future getFireStore(DateTime date, BuildContext context)async{
     var eventMap = super.state;
+    //eventMap.clear();
     await FirebaseFirestore.instance
         .collection('운동기록')
         .doc(('KKuA5ON6HDSVLEJglHx3SCKY7SO2'))
@@ -44,12 +46,7 @@ class EventController extends StateNotifier<LinkedHashMap<DateTime, List<Event>>
         });
       }
       state = eventMap;
-      //state = super.state;
-    });
-  }
 
-  List<Event> getEventsForDay(DateTime day) {
-    state = super.state;
-    return state[day] ?? [];
+    });
   }
 }
