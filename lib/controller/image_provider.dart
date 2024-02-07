@@ -11,10 +11,10 @@ class ImageState extends StateNotifier<List<XFile>> {
   ImageState() : super(<XFile>[]);
   final ImagePickerService picker = ImagePickerService();
 
-  @override
-  set state(List<XFile> value) {
-    super.state = value;
-  }
+  // @override
+  // set state(List<XFile> value) {
+  //   super.state = value;
+  // }
 
   delImage(XFile image) {
     var list = [...super.state];
