@@ -22,8 +22,8 @@ final authControllerProvider =
 //   return authController.checkEmail(email: email);
 // });
 
-final checkAutoLogin = FutureProvider<List<String>?>((ref) {
-  return SharedPreferencesSingleton().getAutoLogin();
+final checkAutoLogin = FutureProvider<bool>((ref) {
+  return UserService.instance.initUser();
 });
 
 class AuthController extends StateNotifier<bool> {

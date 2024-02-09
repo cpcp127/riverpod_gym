@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:riverpodgym/services/user_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../model/event_model.dart';
 
@@ -27,7 +28,7 @@ class EventController extends StateNotifier<LinkedHashMap<DateTime, List<Event>>
     //eventMap.clear();
     await FirebaseFirestore.instance
         .collection('운동기록')
-        .doc(('KKuA5ON6HDSVLEJglHx3SCKY7SO2'))
+        .doc(UserService.instance.userModel.uid)
         .collection(DateFormat('yyyy년MM월').format(date))
         .get().then((value){
       for (int i = 0; i < value.docs.length; i++) {

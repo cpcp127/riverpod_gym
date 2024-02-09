@@ -1,3 +1,4 @@
+import 'package:riverpodgym/services/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesSingleton {
@@ -17,8 +18,14 @@ class SharedPreferencesSingleton {
   Future<List<String>?> getAutoLogin() async {
     var pref = await SharedPreferences.getInstance();
     List<String>? list = pref.getStringList('auto_info');
-    if (list == null) return null;
-    return list;
+    if (list == null){
+      return null;
+
+    }
+
+    else{
+      return list;
+    }
   }
 
   Future setAutoInfo(String uid,String email, String pwd) async {

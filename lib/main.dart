@@ -63,7 +63,7 @@ class MyApp extends ConsumerWidget {
               showUnselectedLabels: true)),
       home: ref.watch(checkAutoLogin).when(
           data: (autoLogin) {
-            return autoLogin == null ? const LogInView() : const HomeView();
+            return autoLogin == false ? const LogInView() : const HomeView();
           },
           error: (error, stackTrace) {
             return Container();

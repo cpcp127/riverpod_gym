@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpodgym/services/shared_prefrence_singleton.dart';
 import 'package:riverpodgym/model/user_model.dart';
@@ -15,28 +14,28 @@ class UserService {
     // create instance
   }
 
-  UserModel userModel = UserModel('uid','email', 'nickname', 'photoUrl');
+  UserModel userModel = UserModel('uid', 'email', 'nickname', 'photoUrl');
 
-  Future<void> initUser() async {
+  Future<bool> initUser() async {
     await SharedPreferencesSingleton().getAutoLogin().then((value) async {
-      if(value==null){
-
-      }else{
+      if (value == null) {
+      } else {
         await FirebaseFirestore.instance
             .collection('user')
             .doc(value[0])
             .get()
             .then((value) {
-          userModel = UserModel(value.data()!['uid'],value.data()!['email'], value.data()!['nickname'],
-              value.data()!['image']);
+          userModel = UserModel(value.data()!['uid'], value.data()!['email'],
+              value.data()!['nickname'], value.data()!['image']);
         });
       }
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(prefs.getStringList('auto_info'));
+    //print(prefs.getStringList('auto_info'));
     if (prefs.getStringList('auto_info') == null) {
+      return false;
     } else {
-
+      return true;
     }
   }
 }
